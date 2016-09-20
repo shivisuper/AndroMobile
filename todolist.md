@@ -27,7 +27,7 @@
 5. Stories - subscriptions list, live stories and all stories
 6. Memories - delete, social share, lock and create story, import from phone’s camera roll.
 
-NB:
+**NB**:
 
 * Recording image or video is allowable. You do not have to do both.
 * Pictograms refer to icons (emoticons), not face recognition/processing
