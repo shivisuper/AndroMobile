@@ -9,11 +9,7 @@ tools:context="com.shivisuper.alachat_mobile.MainActivity">
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.shivisuper.alachat_mobile.MainActivity">
-    <SurfaceView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/cameraSurface"
-        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,6 +23,14 @@ tools:context="com.shivisuper.alachat_mobile.MainActivity">
             android:id="@+id/btnButton"
             android:textSize="10dp"
             />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Back"
+            android:id="@+id/btnBack"
+            android:textSize="10dp" />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -34,13 +38,7 @@ tools:context="com.shivisuper.alachat_mobile.MainActivity">
             android:id="@+id/btnFront"
             android:textSize="10dp"
             />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Back"
-            android:id="@+id/btnBack"
-            android:textSize="10dp"
-            />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,5 +47,12 @@ tools:context="com.shivisuper.alachat_mobile.MainActivity">
             android:visibility="gone"
             />
     </LinearLayout>
+
+    <SurfaceView
+        android:layout_width="match_parent"
+        android:layout_height="477dp"
+        android:id="@+id/cameraSurface"
+        />
+
 </FrameLayout>
 </RelativeLayout>

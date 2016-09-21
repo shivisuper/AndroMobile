@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
                 parameters = camera.getParameters();
                 if (parameters.getMaxNumDetectedFaces() > 0) {
                     camera.startFaceDetection();
-                    Toast.makeText(getApplicationContext(), "Face detection started", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Detecting your face", Toast.LENGTH_LONG).show();
                 }
                 return false;
             }
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
             }
         }
         sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(mediaFile)));
-        Toast.makeText(getApplicationContext(), "download successfully", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_LONG).show();
     }
 
     @Override
