@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class MainActivity extends AppCompatActivity implements SurfaceHolder.Callback {
+public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback {
 
     Button btnTakePhoto;
     Button btnBackCamera;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements SurfaceHolder.Cal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_camera);
         surfaceView = (SurfaceView) findViewById(R.id.cameraSurface);
         surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
