@@ -1,3 +1,15 @@
 <resources>
-    <string name="app_name">AlaChat-Mobile</string>
+    <string name="app_name">AlaChat</string>
+    <string name="greet">Welcome to AlaChat</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="email">Email</string>
+    <string name="pass">Password</string>
+    <string name="pass_again">Re-enter Password</string>
+    <string name="not_member">No account yet? Create one</string>
+    <string name="action_settings">Settings</string>
+    <string name="name">Name</string>
+    <string name="address">Address</string>
+    <string name="number">Mobile Number</string>
+    <string name="new_account">Create Account</string>
+    <string name="member">Already a member? Login</string>
 </resources>
