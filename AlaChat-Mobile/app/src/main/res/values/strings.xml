@@ -12,4 +12,5 @@
     <string name="number">Mobile Number</string>
     <string name="new_account">Create Account</string>
     <string name="member">Already a member? Login</string>
+    <string name="auth_failed">Authentication failed</string>
 </resources>
