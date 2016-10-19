@@ -4,12 +4,143 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     tools:context="com.shivisuper.alachat_mobile.CameraActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_image"
+        android:visibility="gone">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:id="@+id/img_view"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginBottom="20dp">
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/save"
+                android:layout_gravity="center"
+                android:contentDescription="@string/save" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="50dp"
+            android:layout_marginBottom="20dp">
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/basket"
+                android:contentDescription="@string/cancel"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/camera_preview"
+        android:visibility="visible">
         <SurfaceView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/cameraSurface"
             android:layout_gravity="bottom"
             />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/view_flash_on"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/btn_flash_on"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/round_button"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/flash"
+                    android:contentDescription="@string/flash_off"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/view_flash_off"
+                android:visibility="gone">
+                <Button
+                    android:id="@+id/btn_flash_off"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/round_button"
+                    />
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/no_flash"
+                    android:contentDescription="@string/flash_on"
+                    android:layout_gravity="center"
+                    />
+            </FrameLayout>
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:id="@+id/frame_flash_unavailable"
+                android:visibility="visible">
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/flash_off"
+                    android:contentDescription="@string/no_flash"
+                    android:layout_gravity="center"
+                    />
+            </FrameLayout>
+        </RelativeLayout>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -29,10 +160,11 @@
                     android:background="@drawable/round_button"
                     />
                 <ImageView
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:scaleType="fitXY"
-                    android:src="@drawable/camera_capture"
+                    android:src="@drawable/shutter"
+                    android:contentDescription="@string/shutter"
                     android:layout_gravity="center"/>
             </FrameLayout>
             <FrameLayout
@@ -47,13 +179,15 @@
                     android:layout_height="60dp"
                     android:layout_gravity="center"
                     android:background="@drawable/round_button"/>
-                    <!--android:background="?android:selectableItemBackground"-->
+                <!--android:background="?android:selectableItemBackground"-->
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:scaleType="fitXY"
                     android:src="@drawable/camera_switch"
+                    android:contentDescription="@string/switch_camera"
                     android:layout_gravity="center"/>
             </FrameLayout>
         </RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>

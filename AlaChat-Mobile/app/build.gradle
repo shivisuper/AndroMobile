@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    buildToolsVersion "24.0.2"
 
     defaultConfig {
         applicationId "com.shivisuper.alachat_mobile"
@@ -21,14 +21,22 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    //compile 'com.google.android.gms:play-services-appindexing:9.4.0'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.squareup.okhttp3:okhttp:3.4.1'
-    compile 'com.google.firebase:firebase-auth:9.4.0'
+    compile 'com.google.firebase:firebase-auth:9.6.1'
+    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.firebaseui:firebase-ui-database:0.6.0'
+    compile 'com.google.firebase:firebase-database:9.6.1'
+    compile 'com.google.firebase:firebase-crash:9.6.1'
+    compile 'com.squareup.picasso:picasso:2.1.1'
+    compile 'com.google.zxing:core:3.2.1'
+    compile 'com.firebaseui:firebase-ui-storage:0.6.0'
+    compile 'com.dlazaro66.qrcodereaderview:qrcodereaderview:1.0.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     testCompile 'junit:junit:4.12'
 }
+
 
 
 apply plugin: 'com.google.gms.google-services'

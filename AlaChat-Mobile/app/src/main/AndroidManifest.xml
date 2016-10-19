@@ -7,6 +7,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.flash" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -20,28 +21,27 @@
         <activity
             android:name=".LoginActivity"
             android:launchMode="singleTop"
-            android:theme="@style/AppTheme.Dark"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Dark">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".SignupActivity"
-            android:theme="@style/AppTheme.Dark"
-            android:label="@string/signup"/>
+            android:label="@string/signup"
+            android:theme="@style/AppTheme.Dark" />
         <activity
             android:name=".CameraActivity"
-            android:label="@string/camera"/>
-        <activity
-            android:name=".SettingsActivity"
-            android:theme="@style/AppTheme.Dark"
-            android:label="@string/title_activity_settings"
-            android:parentActivityName=".CameraActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.shivisuper.alachat_mobile.CameraActivity" />
-        </activity>
+            android:label="@string/camera" />
+        <activity android:name=".AlacodeActivity" />
+        <activity android:name=".ScannerActivity" />
+        <activity android:name=".Message_activity" />
+        <activity android:name=".FriendList_Activity" />
+        <activity android:name=".AddFriends_activity" />
+        <activity android:name=".ImageUpload_activity" />
     </application>
+
 </manifest>
