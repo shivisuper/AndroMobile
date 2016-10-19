@@ -21,7 +21,7 @@ import java.util.List;
 import com.shivisuper.alachat_mobile.models.Photo;
 import com.shivisuper.alachat_mobile.models.Story;
 
-public class StoryViewer_Activity extends AppCompatActivity {
+public class StoryViewerActivity extends AppCompatActivity {
  Boolean isLoaded = false;
     List<Bitmap> storyImages;
     private Handler progressBarHandler;

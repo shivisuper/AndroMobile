@@ -28,7 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriends_activity extends AppCompatActivity {
+public class AddFriendsActivity extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     ArrayList<String> userLit = new ArrayList<>();
@@ -221,7 +221,7 @@ public class AddFriends_activity extends AppCompatActivity {
 
 
 
-                        Intent intent = new Intent(AddFriends_activity.this, FriendList_Activity.class);
+                        Intent intent = new Intent(AddFriendsActivity.this, FriendListActivity.class);
                         startActivity(intent);
                         finish();
 

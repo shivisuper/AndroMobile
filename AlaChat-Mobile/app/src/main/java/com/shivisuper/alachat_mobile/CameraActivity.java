@@ -82,6 +82,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Bind(R.id.img_view) ImageView imgView;
     @Bind(R.id.btnSave) Button btnSave;
     @Bind(R.id.btnCancel) Button btnCancel;
+    @Bind(R.id.btnShare) Button btnSend;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,8 +133,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 if(user.getEmail() != null && Objects.equals(user.getEmail(), loginInfo)) {
                     userName = dataSnapshot.getKey();
                     myself = userName;
-                    Toast.makeText(CameraActivity.this, "Welcome back " + userName + "!",
-                            Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CameraActivity.this, "Welcome back " + userName + "!", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -169,6 +169,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         btnFlashOn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         btnCancel.setOnClickListener(this);
+        btnSend.setOnClickListener(this);
         gestureDetector = new GestureDetector(this, new MyGestureDetector());
         View.OnTouchListener gestureListener = new View.OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
@@ -190,12 +191,12 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
                     //Toast.makeText(CameraActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
-                    Intent storyList = new Intent(getApplicationContext(), StoriesListActivity.class);
-                    startActivity(storyList);
+                    Intent storyListIntent = new Intent(getApplicationContext(), StoriesListActivity.class);
+                    startActivity(storyListIntent);
                 } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
                     //Toast.makeText(CameraActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
-                    Intent friendList = new Intent(getApplicationContext(), FriendList_Activity.class);
+                    Intent friendList = new Intent(getApplicationContext(), FriendListActivity.class);
                     startActivity(friendList);
                 } else if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) >
                         SWIPE_THRESHOLD_VELOCITY) {
@@ -387,6 +388,36 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
     }
 
+    public void sendToActivity()
+    {
+        File sendPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+        if (sendPictureFile == null){
+            Log.d(TAG, "Error creating media file, check storage permissions");
+            return;
+        }
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(sendPictureFile);
+            photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            //scanMedia(sendPictureFile.getPath());
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.flush();
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        Uri sendPictureUri = Uri.fromFile(sendPictureFile);
+        Intent sendToActivity = new Intent(this, SendToActivity.class);
+        sendToActivity.setData(sendPictureUri);
+        startActivity(sendToActivity);
+    }
+
     public void cancelPhotoView() {
         photoPreview.setVisibility(View.GONE);
         cameraPreview.setVisibility(View.VISIBLE);
@@ -419,10 +450,10 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
 
     public static void setCameraDisplayOrientation(Activity activity,
                                                    int cameraId,
-                                                   android.hardware.Camera camera) {
-        android.hardware.Camera.CameraInfo info =
-                new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo(cameraId, info);
+                                                   Camera camera) {
+        Camera.CameraInfo info =
+                new Camera.CameraInfo();
+        Camera.getCameraInfo(cameraId, info);
         int rotation = activity.getWindowManager().getDefaultDisplay()
                 .getRotation();
         int degrees = 0;
@@ -484,9 +515,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             parameters = mCamera.getParameters();
             parameters.setPictureSize(mPictureWidth, mPictureHeight);
             List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
-            for (Camera.Size size : sizes) {
+            /*for (Camera.Size size : sizes) {
                 Log.i(TAG, "Available resolution: "+size.width+" "+size.height);
-            }
+            }*/
             mCamera.setParameters(parameters);
             mCamera.setDisplayOrientation(90);
             mCamera.setPreviewDisplay(surfaceHolder);
@@ -503,7 +534,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     public void releaseCamera() {
-
+        
         if(mCamera != null) {
             mCamera.stopPreview();
             mHolder.removeCallback(this);
@@ -532,6 +563,10 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             saveImage();
         } else if (i == R.id.btnCancel) {
             cancelPhotoView();
+        }
+        else if (i == R.id.btnShare)
+        {
+            sendToActivity();
         }
     }
 }

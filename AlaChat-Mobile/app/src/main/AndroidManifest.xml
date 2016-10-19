@@ -38,13 +38,14 @@
             android:label="@string/camera" />
         <activity android:name=".AlacodeActivity" />
         <activity android:name=".ScannerActivity" />
-        <activity android:name=".Message_activity" />
-        <activity android:name=".FriendList_Activity" />
-        <activity android:name=".AddFriends_activity" />
-        <activity android:name=".ImageUpload_activity" />
+        <activity android:name=".MessageActivity" />
+        <activity android:name=".FriendListActivity" />
+        <activity android:name=".AddFriendsActivity" />
+        <activity android:name=".ImageUploadActivity" />
         <activity android:name=".ViewImageActivity" />
-        <activity android:name=".StoryViewer_Activity" />
+        <activity android:name=".StoryViewerActivity" />
         <activity android:name=".StoriesListActivity" />
+        <activity android:name=".SendToActivity" />
     </application>
 
 </manifest>

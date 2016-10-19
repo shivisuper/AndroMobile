@@ -130,7 +130,7 @@ public class StoriesListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // remove the clicked item from arraylist
                if(stories.get(position).getStoryPhotos()!=null) {
-                   Intent myIntent = new Intent(StoriesListActivity.this, StoryViewer_Activity.class);
+                   Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
                    myIntent.putExtra("Story", stories.get(position));
                    startActivity(myIntent);
                }

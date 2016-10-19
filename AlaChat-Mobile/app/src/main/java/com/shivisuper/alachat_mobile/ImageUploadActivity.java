@@ -15,7 +15,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-public class ImageUpload_activity extends AppCompatActivity {
+public class ImageUploadActivity extends AppCompatActivity {
 
     private Button mSelectImage;
 
@@ -61,7 +61,7 @@ public class ImageUpload_activity extends AppCompatActivity {
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(ImageUpload_activity.this, "UploadDone", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ImageUploadActivity.this, "UploadDone", Toast.LENGTH_LONG).show();
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Log.v("aa",downloadUrl.toString());
                 }

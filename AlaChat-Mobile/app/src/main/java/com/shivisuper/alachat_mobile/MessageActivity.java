@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 import static com.shivisuper.alachat_mobile.Constants.userToSend;
 
-public class Message_activity extends AppCompatActivity implements View.OnClickListener {
+public class MessageActivity extends AppCompatActivity implements View.OnClickListener {
 
 
     private static final int GALLERY_INTENT = 2;
@@ -92,7 +92,7 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
                 ChatMessage msg = (ChatMessage) adapterView.getItemAtPosition(i);
                 if (msg.getMessage().isEmpty()) {
                     try {
-                        Intent toViewImgAc = new Intent(Message_activity.this,
+                        Intent toViewImgAc = new Intent(MessageActivity.this,
                                 ViewImageActivity.class);
                         toViewImgAc.setData(Uri.parse(msg.getImageUri()));
                         startActivityForResult(toViewImgAc, VIEW_IMAGE_INTENT);
@@ -175,7 +175,7 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //Toast.makeText(Message_activity.this, "UploadDone", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MessageActivity.this, "UploadDone", Toast.LENGTH_SHORT).show();
                     ChatMessage chat = new ChatMessage(userToSend,
                             "",
                             Constants.myself, theKey,
@@ -226,7 +226,7 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(Message_activity.this,
+                            Toast.makeText(MessageActivity.this,
                                     getResources().getString(R.string.unable_to_remove),
                                     Toast.LENGTH_SHORT).show();
                         }

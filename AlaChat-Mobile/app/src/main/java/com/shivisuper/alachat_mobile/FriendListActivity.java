@@ -22,7 +22,7 @@ import java.util.ArrayList;
 
 import static com.shivisuper.alachat_mobile.Constants.userToSend;
 
-public class FriendList_Activity extends AppCompatActivity {
+public class FriendListActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     ArrayList<String> mFriends = new ArrayList<>();
     ListView mListView;
@@ -94,7 +94,7 @@ public class FriendList_Activity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String val = (String) adapterView.getItemAtPosition(i);
-                Intent toAc = new Intent(FriendList_Activity.this, Message_activity.class);
+                Intent toAc = new Intent(FriendListActivity.this, MessageActivity.class);
                 userToSend = val;
                 startActivity(toAc);
             }
@@ -120,7 +120,7 @@ public class FriendList_Activity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_favorite:
-                Intent intent = new Intent(FriendList_Activity.this, AddFriends_activity.class);
+                Intent intent = new Intent(FriendListActivity.this, AddFriendsActivity.class);
                 startActivity(intent);
                 finish();
                 return true;

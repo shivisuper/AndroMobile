@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_send_to"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.shivisuper.alachat_mobile.SendToActivity">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/textView">
+
+    </FrameLayout>
+
+    <Button
+        android:text="@string/my_story"
+        android:layout_width="150dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/AddAsAStoryBtn"
+        android:layout_marginStart="12dp"
+
+        android:background="@android:color/holo_orange_light"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_height="35dp" />
+
+    <Button
+        android:text="@string/my_memories"
+        android:layout_width="150dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="12dp"
+        android:id="@+id/AddAsAMemory"
+        android:layout_alignParentEnd="true"
+        android:background="@android:color/holo_orange_light" />
+
+    <TextView
+        android:text="@string/feed_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AddAsAStoryBtn"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="31dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:id="@+id/textView" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/textView2"
+        android:background="@color/common_google_signin_btn_text_dark_default">
+
+    </FrameLayout>
+
+    <TextView
+        android:text="@string/friends"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/AddAsAMemory"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="42dp"
+        android:paddingLeft="7dp"
+        android:paddingRight="7dp"
+        android:id="@+id/textView2"
+        android:textAppearance="@style/TextAppearance.AppCompat.Light.SearchResult.Title" />
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="13dp"
+        android:id="@+id/listOfFriends"
+        android:background="@color/accent" />
+
+</RelativeLayout>

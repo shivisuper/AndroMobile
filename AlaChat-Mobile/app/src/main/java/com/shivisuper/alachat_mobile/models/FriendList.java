@@ -1,4 +1,4 @@
-package com.shivisuper.alachat_mobile;
+package com.shivisuper.alachat_mobile.models;
 
 public class FriendList {
 

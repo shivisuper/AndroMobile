@@ -58,6 +58,32 @@
                 android:contentDescription="@string/cancel"
                 android:layout_gravity="center"/>
         </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="100dp"
+            android:layout_marginBottom="20dp">
+            <Button
+                android:id="@+id/btnShare"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/common_google_signin_btn_text_light_normal"
+                android:contentDescription="@string/cancel"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
