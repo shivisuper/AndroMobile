@@ -4,13 +4,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import static com.shivisuper.alachat_mobile.Constants.timerVal;
 
 public class ViewImageActivity extends Activity {
 
@@ -18,38 +18,29 @@ public class ViewImageActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_view_image);
-		// Show the Up button in the action bar.
-		setupActionBar();
+		//setupActionBar();
 		
 		ImageView imageView = (ImageView)findViewById(R.id.imageView);
 		
-		Uri imageUri = getIntent().getData();
+		final Uri imageUri = getIntent().getData();
 		
 		Picasso.with(this).load(imageUri.toString()).into(imageView);
+        final Intent resultIntent = new Intent();
+        resultIntent.setData(imageUri);
 		
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
+                setResult(RESULT_OK, resultIntent);
 				finish();
 			}
-		}, 10*1000);
+		}, timerVal*1000);
 	}
 
-	private void setupActionBar() {
+	/*private void setupActionBar() {
 
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 
-	}
-
-	/*@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
 	}*/
-
 }

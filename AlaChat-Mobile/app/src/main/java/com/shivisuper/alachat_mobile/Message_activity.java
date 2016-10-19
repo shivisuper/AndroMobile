@@ -4,7 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -12,6 +14,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -32,12 +37,14 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
 
 
     private static final int GALLERY_INTENT = 2;
+    private static final int VIEW_IMAGE_INTENT = 10;
     private StorageReference mStorage;
     private ProgressDialog mProgressDialog;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference refMsgFrom;
     private DatabaseReference refMsgTo;
     private Query myRef;
+    private Query qryDelete;
     private ArrayList<ChatMessage> messages;
     private ChatListAdapter adapter;
     private ListView messageLst;
@@ -63,6 +70,7 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.message_activity);
+        setTitle(userToSend);
         setUIComponents();
         initiliazeFirebase();
     }
@@ -71,24 +79,28 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
         messages = new ArrayList<>();
         adapter = new ChatListAdapter(messages, this);
         messageLst = (ListView) findViewById(R.id.messageLst);
-
-        messageLst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String val = (String) adapterView.getItemAtPosition(i);
-                Intent toAc = new Intent(Message_activity.this, ViewImageActivity.class);
-                userToSend = val;
-                startActivity(toAc);
-            }
-        });
-
-
         messageTxt = (EditText) findViewById(R.id.messageTxt);
         imageButton = (ImageButton) findViewById(R.id.imageButton);
         imageButton.setOnClickListener(this);
         sendbtn = (Button) findViewById(R.id.sendBtn);
         sendbtn.setOnClickListener(this);
         messageLst.setAdapter(adapter);
+        messageLst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ChatMessage msg = (ChatMessage) adapterView.getItemAtPosition(i);
+                if (msg.getMessage().isEmpty()) {
+                    try {
+                        Intent toViewImgAc = new Intent(Message_activity.this,
+                                ViewImageActivity.class);
+                        toViewImgAc.setData(Uri.parse(msg.getImageUri()));
+                        startActivityForResult(toViewImgAc, VIEW_IMAGE_INTENT);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
     public void initiliazeFirebase () {
@@ -103,7 +115,6 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
                 messages.add(chat);
-                setTitle(userToSend);
                 adapter.notifyDataSetChanged();
             }
 
@@ -114,7 +125,9 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-
+                ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
+                messages.remove(chat);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -150,10 +163,10 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        refMsgTo = database.getReference("userDetails/" + userToSend + "/message");
-        refMsgFrom = database.getReference("userDetails/" + Constants.myself + "/message");
         final String theKey = getKey(userToSend, Constants.myself);
         myRef = refMsgFrom.orderByChild("theKey").equalTo(theKey);
+        refMsgTo = database.getReference("userDetails/" + userToSend + "/message");
+        refMsgFrom = database.getReference("userDetails/" + Constants.myself + "/message");
         if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
             Uri uri = data.getData();
             //Log.v("uriData", uri.toString());
@@ -170,6 +183,53 @@ public class Message_activity extends AppCompatActivity implements View.OnClickL
                     refMsgFrom.push().setValue(chat);
                 }
             });
+        } else if (requestCode == VIEW_IMAGE_INTENT && resultCode == RESULT_OK) {
+            final Intent retData = data;
+            /*refMsgTo = database.getReference("userDetails/" + userToSend + "/message");
+            refMsgFrom = database.getReference("userDetails/" + Constants.myself + "/message");*/
+            StorageReference filepath = mStorage.child(retData.getData().getLastPathSegment());
+            filepath.delete().
+                    addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            refMsgTo.child("imageUri").
+                                    addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.getValue() != null) {
+                                                Log.v("onDataChange: ",
+                                                        dataSnapshot.getValue().toString());
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                            refMsgFrom.child("imageUri").
+                                    addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            //dataSnapshot.getRef().setValue(null);
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
+                        }
+                    }).
+                    addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(Message_activity.this,
+                                    getResources().getString(R.string.unable_to_remove),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
     }
 

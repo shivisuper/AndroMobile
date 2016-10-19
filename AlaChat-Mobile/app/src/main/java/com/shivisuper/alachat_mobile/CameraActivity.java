@@ -132,7 +132,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 if(user.getEmail() != null && Objects.equals(user.getEmail(), loginInfo)) {
                     userName = dataSnapshot.getKey();
                     myself = userName;
-                    Toast.makeText(CameraActivity.this, userName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CameraActivity.this, "Welcome back " + userName + "!",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
 

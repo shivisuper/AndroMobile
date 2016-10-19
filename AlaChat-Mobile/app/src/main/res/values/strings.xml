@@ -39,4 +39,5 @@
     <string name="type_your_message">Enter msg</string>
     <string name="NoRecent">No recent</string>
     <string name="title_friend_list">Your Friends</string>
+    <string name="unable_to_remove">Could not delete file from server!</string>
 </resources>

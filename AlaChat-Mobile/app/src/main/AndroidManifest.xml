@@ -42,6 +42,7 @@
         <activity android:name=".FriendList_Activity" />
         <activity android:name=".AddFriends_activity" />
         <activity android:name=".ImageUpload_activity" />
+        <activity android:name=".ViewImageActivity" />
     </application>
 
 </manifest>
