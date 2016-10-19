@@ -40,4 +40,7 @@
     <string name="NoRecent">No recent</string>
     <string name="title_friend_list">Your Friends</string>
     <string name="unable_to_remove">Could not delete file from server!</string>
+    <string name="title_activity_story_viewer_">StoryViewer_Activity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.shivisuper.alachat_mobile;
+package com.shivisuper.alachat_mobile.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import com.shivisuper.alachat_mobile.Constants;
+import com.shivisuper.alachat_mobile.R;
 import com.shivisuper.alachat_mobile.models.ChatMessage;
 //import com.shivisuper.alachat_mobile.widgets.Emoji;
 import com.squareup.picasso.Picasso;

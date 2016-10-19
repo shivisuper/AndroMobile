@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.shivisuper.alachat_mobile.adapters.ChatListAdapter;
 import com.shivisuper.alachat_mobile.models.ChatMessage;
 
 import java.util.ArrayList;

@@ -43,6 +43,8 @@
         <activity android:name=".AddFriends_activity" />
         <activity android:name=".ImageUpload_activity" />
         <activity android:name=".ViewImageActivity" />
+        <activity android:name=".StoryViewer_Activity" />
+        <activity android:name=".StoriesListActivity" />
     </application>
 
 </manifest>

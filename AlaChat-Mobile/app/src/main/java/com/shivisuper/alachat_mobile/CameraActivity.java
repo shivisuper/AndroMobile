@@ -189,7 +189,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 // right to left swipe
                 if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
-                    Toast.makeText(CameraActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(CameraActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                    Intent storyList = new Intent(getApplicationContext(), StoriesListActivity.class);
+                    startActivity(storyList);
                 } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
                     //Toast.makeText(CameraActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
