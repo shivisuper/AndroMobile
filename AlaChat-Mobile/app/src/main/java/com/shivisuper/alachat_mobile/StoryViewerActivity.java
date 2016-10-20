@@ -130,6 +130,12 @@ public class StoryViewerActivity extends AppCompatActivity {
 
         Bundle bundle = getIntent().getExtras();
         story = (Story) getIntent().getSerializableExtra("Story");
+        if(story.getCreatedBy()=="My Memories")
+        {
+            TextView loadText = (TextView)findViewById(R.id.loadText);
+            loadText.setText("Downloading Photo");
+
+        }
         //setTitle(story.getStoryName());
         setTitle(story.getCreatedBy());
         progressBar = (ProgressBar) findViewById(R.id.timeLeft);

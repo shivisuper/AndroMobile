@@ -48,4 +48,5 @@
     <string name="feed_msg">Stories are shown in your friends feed for 24 hours</string>
     <string name="friends">Friends</string>
     <string name="user_profile">Set Pic Profile</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

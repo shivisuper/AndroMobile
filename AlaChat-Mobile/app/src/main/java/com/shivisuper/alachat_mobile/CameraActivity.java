@@ -215,7 +215,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                     startActivity(friendList);
                 } else if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) >
                         SWIPE_THRESHOLD_VELOCITY) {
-                    Toast.makeText(CameraActivity.this, "Up Swipe", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(CameraActivity.this, "Up Swipe", Toast.LENGTH_SHORT).show();
+                    Intent memories = new Intent(getApplicationContext(), Memories_Activity.class);
+                    startActivity(memories);
                 } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) >
                         SWIPE_THRESHOLD_VELOCITY) {
                     Intent qrintent = new Intent(getApplicationContext(), AlacodeActivity.class);
