@@ -3,6 +3,7 @@ package com.shivisuper.alachat_mobile;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -10,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,8 +24,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
+
+
+
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -46,7 +49,10 @@ import static com.shivisuper.alachat_mobile.Constants.myself;
 import static com.shivisuper.alachat_mobile.Constants.timerVal;
 
 public class SendToActivity extends AppCompatActivity {
-
+    int increment = 4;
+    MyLocation myLocation = new MyLocation();
+    double Lat;
+    double Lng;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     StorageReference mStorage ;
     ArrayList<String> mMessages = new ArrayList<>();
@@ -64,6 +70,15 @@ public class SendToActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_to);
         setTitle("Share With");
+
+
+        myLocation.getLocation(getApplicationContext(), locationResult);
+
+        boolean r = myLocation.getLocation(getApplicationContext(),
+                locationResult);
+
+
+
         /*googleApiClient = new GoogleApiClient.Builder(this, this, this).
                 addApi(LocationServices.API).build();*/
         friendReference = database.getReference("userDetails/" + myself+"/friends");
@@ -105,6 +120,7 @@ public class SendToActivity extends AppCompatActivity {
             }
         });
     }
+
 
     /*@Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -160,7 +176,9 @@ public class SendToActivity extends AppCompatActivity {
                         try {
                             SentToActivityModel data = new
                                     SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),
-                                    Integer.toString(timerVal),getDate());
+                                    Integer.toString(timerVal),getDate(),
+                                    Lng,
+                                    Lat);
                             memoryReference.push().setValue(data);
                             //getContentResolver().delete(uriForPic, null, null);
                             File tmpvar = new File(uriForPic.getPath());
@@ -184,6 +202,36 @@ public class SendToActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+
+    public MyLocation.LocationResult locationResult = new MyLocation.LocationResult() {
+
+        @Override
+        public void gotLocation(Location location) {
+            // TODO Auto-generated method stub
+            double Longitude = location.getLongitude();
+            double Latitude = location.getLatitude();
+            Lat = Latitude;
+            Lng = Longitude;
+            //Toast.makeText(getApplicationContext(), "Got Location",
+                //    Toast.LENGTH_LONG).show();
+
+            try {
+                SharedPreferences locationpref = getApplication()
+                        .getSharedPreferences("location", MODE_WORLD_READABLE);
+                SharedPreferences.Editor prefsEditor = locationpref.edit();
+                prefsEditor.putString("Longitude", Longitude + "");
+                prefsEditor.putString("Latitude", Latitude + "");
+                prefsEditor.commit();
+                System.out.println("SHARE PREFERENCE ME PUT KAR DIYA.");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    };
+
 
     public String getDate()
     {
