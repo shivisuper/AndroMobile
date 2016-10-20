@@ -26,25 +26,38 @@ import com.shivisuper.alachat_mobile.adapters.StoryAdapter;
 import com.shivisuper.alachat_mobile.models.Photo;
 import com.shivisuper.alachat_mobile.models.Story;
 
+import static com.shivisuper.alachat_mobile.Constants.myself;
+
 public class StoriesListActivity extends AppCompatActivity {
 
 
 
 
     private List<Story> stories = new ArrayList<>();
-    private List<Photo> currPhotos = new ArrayList<Photo>();
+    private List<Story> myStoryList = new ArrayList<>();
+   private List<Photo> currPhotos = new ArrayList<Photo>();
     private StoryAdapter storyAdapter;
-
+    private StoryAdapter myStoryAdapter;
 
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stories_list);
+       // getActionBar().setTitle(getTheme().toString());
+       // getActionBar().setTitle("Stories");
+        // getSupportActionBar().setTitle("All crazy stuff");
+
+
+
         GridView gridView;
+        GridView gridViewMyStory;
         Date cdate = new Date(System.currentTimeMillis());
+
+//
+
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myStoryRef =  database.getReference("stories/");
+       final DatabaseReference myStoryRef =  database.getReference("stories/");
         myStoryRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -52,10 +65,11 @@ public class StoriesListActivity extends AppCompatActivity {
                 currStory.setCreatedBy(dataSnapshot.getKey());
                 Map<String,Object> a = new HashMap<String, Object>();
                 List<Photo> currPhotos = new ArrayList<Photo>();
+
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
                     //if(photoSnapshot.getKey().contains("Photo")) {
-                    a.put(photoSnapshot.getKey(), photoSnapshot.getValue());
-                    Photo currPhoto = new Photo();
+                        a.put(photoSnapshot.getKey(), photoSnapshot.getValue());
+                        Photo currPhoto = new Photo();
 
                     SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
                     try {
@@ -67,16 +81,23 @@ public class StoriesListActivity extends AppCompatActivity {
                     }
 
 
-                    if ((((HashMap) a.get(photoSnapshot.getKey())).get("Timeout")) != null)
-                        currPhoto.setTimeout(((Long) (((HashMap) a.get(photoSnapshot.getKey())).get("Timeout"))).intValue());
-                    currPhoto.setPhotoPath((String) (((HashMap) a.get(photoSnapshot.getKey())).get("PhotoPath")));
+                        if ((((HashMap) a.get(photoSnapshot.getKey())).get("TimeOut")) != null) {
+                            Long timeout = Long.parseLong((String)(((HashMap) a.get(photoSnapshot.getKey())).get("TimeOut")));
+                            currPhoto.setTimeout(timeout.intValue());
+                        }
+                        currPhoto.setPhotoPath((String) (((HashMap) a.get(photoSnapshot.getKey())).get("PhotoPath")));
 
 
-                    currPhotos.add(currPhoto);
+                        currPhotos.add(currPhoto);
                 }
                 currStory.setStoryPhotos(currPhotos);
-                stories.add(currStory);
+                if(currStory.getCreatedBy().contains(myself))
+                    myStoryList.add(currStory);
+                else
+                    stories.add(currStory);
+
                 storyAdapter.notifyDataSetChanged();
+                myStoryAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -106,17 +127,36 @@ public class StoriesListActivity extends AppCompatActivity {
 
 
         gridView = (GridView) findViewById(R.id.publicStories_layout);
-
+        gridViewMyStory = (GridView) findViewById(R.id.myStories_layout);
         storyAdapter = new StoryAdapter(StoriesListActivity.this, R.layout.single_story_layout,stories);
+        myStoryAdapter = new StoryAdapter(StoriesListActivity.this, R.layout.single_story_layout,myStoryList);
         gridView.setAdapter(storyAdapter);
-
+        gridViewMyStory.setAdapter(myStoryAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // remove the clicked item from arraylist
-                if(stories.get(position).getStoryPhotos()!=null) {
+               if(stories.get(position).getStoryPhotos()!=null) {
+                   Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
+                   myIntent.putExtra("Story", stories.get(position));
+                   startActivity(myIntent);
+               }
+                else
+               {
+
+                   Toast.makeText(StoriesListActivity.this, "No photos in this story!",
+                           Toast.LENGTH_SHORT).show();
+
+               }
+            }
+        });
+        gridViewMyStory.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // remove the clicked item from arraylist
+                if(myStoryList.get(position).getStoryPhotos()!=null) {
                     Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
-                    myIntent.putExtra("Story", stories.get(position));
+                    myIntent.putExtra("Story", myStoryList.get(position));
                     startActivity(myIntent);
                 }
                 else

@@ -67,7 +67,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private Camera mCamera;
     private Camera.Parameters parameters;
     private Bitmap snapTaken;
-    private Bitmap doodlePic;
     private static int currentCamID;
     int mPictureWidth = 1920;//1280;
     int mPictureHeight = 1080;//720;
@@ -84,11 +83,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Bind(R.id.camera_preview) View cameraPreview;
     @Bind(R.id.cameraSurface) SurfaceView surfaceView;
     @Bind(R.id.img_view) ImageView imgView;
-    @Bind(R.id.btnSave) Button btnSave;
-    @Bind(R.id.btnCancel) Button btnCancel;
-    @Bind(R.id.btnShare) Button btnSend;
+    @Bind(R.id.btn_save) Button btnSave;
+    @Bind(R.id.btn_cancel) Button btnCancel;
+    @Bind(R.id.btn_share) Button btnSend;
     @Bind(R.id.drawing_view) DrawingView drawingView;
     @Bind(R.id.btn_edit) Button btnEdit;
+    @Bind(R.id.btn_cancel_edit) Button btnCancelEdit;
+    @Bind(R.id.frame_cancel_edit) View frmCancelEdit;
+    @Bind(R.id.frame_edit) View frmEdit;
+    @Bind(R.id.frame_cancel) View frmCancel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -184,6 +187,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         };
         surfaceView.setOnTouchListener(gestureListener);
         btnEdit.setOnClickListener(this);
+        btnCancelEdit.setOnClickListener(this);
     }
 
     class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -197,12 +201,10 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 // right to left swipe
                 if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
-                    //Toast.makeText(CameraActivity.this, "Left Swipe", Toast.LENGTH_SHORT).show();
                     Intent storyListIntent = new Intent(getApplicationContext(), StoriesListActivity.class);
                     startActivity(storyListIntent);
                 } else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) >
                         SWIPE_THRESHOLD_VELOCITY) {
-                    //Toast.makeText(CameraActivity.this, "Right Swipe", Toast.LENGTH_SHORT).show();
                     Intent friendList = new Intent(getApplicationContext(), FriendListActivity.class);
                     startActivity(friendList);
                 } else if (e1.getY() - e2.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) >
@@ -361,10 +363,14 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         FileOutputStream fos = null;
         try {
             drawingView.setDrawingCacheEnabled(true);
+            Bitmap doodlePic;
             doodlePic = drawingView.getDrawingCache();
             fos = new FileOutputStream(pictureFile);
-            //snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            if (drawingView.getVisibility() == View.GONE) {
+                snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            } else {
+                doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            }
             Toast.makeText(CameraActivity.this, "Imaged saved successfully!",
                     Toast.LENGTH_SHORT).show();
             scanMedia(pictureFile.getPath());
@@ -392,12 +398,18 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         FileOutputStream fos = null;
         try {
             drawingView.setDrawingCacheEnabled(true);
+            Bitmap doodlePic;
             doodlePic = drawingView.getDrawingCache();
             fos = new FileOutputStream(sendPictureFile);
-            //snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            if (drawingView.getVisibility() == View.GONE) {
+                snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            } else {
+                doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            }
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             if (fos != null) {
                 try {
@@ -415,16 +427,17 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     {
         Intent sendToActivity = new Intent(this, SendToActivity.class);
         sendToActivity.setData(sendPictureUri);
+        sendToActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(sendToActivity);
-        setResult(RESULT_OK, sendToActivity);
+        //setResult(RESULT_OK, sendToActivity);
     }
 
     public void navigateToMessage(Uri sendPictureUri) {
         Intent sendToMessage = new Intent(this, MessageActivity.class);
         sendToMessage.setData(sendPictureUri);
         sendToMessage.putExtra("caller", "Camera");
+        sendToMessage.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(sendToMessage);
-        //setResult(RESULT_OK, sendToMessage);
     }
 
     public void cancelPhotoView() {
@@ -553,6 +566,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     public void doodle () {
+        frmEdit.setVisibility(View.GONE);
+        frmCancelEdit.setVisibility(View.VISIBLE);
+        frmCancel.setVisibility(View.GONE);
         drawingView.setVisibility(View.VISIBLE);
     }
 
@@ -572,23 +588,33 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             toggleFlash(false);
         } else if (i == R.id.btn_flash_off) {
             toggleFlash(true);
-        } else if (i == R.id.btnSave) {
+        } else if (i == R.id.btn_save) {
             saveImage();
-        } else if (i == R.id.btnCancel) {
+        } else if (i == R.id.btn_cancel) {
             cancelPhotoView();
-        } else if (i == R.id.btnShare) {
+        } else if (i == R.id.btn_share) {
             String caller = getIntent().getStringExtra("caller");
-            File sendPictureFile = setImageUriandSave();
-            if (sendPictureFile == null) return;
-            Uri sendPictureUri = Uri.fromFile(sendPictureFile);
-            if (caller != null && Objects.equals(caller, "MessageActivity")) {
-                navigateToMessage(sendPictureUri);
-            } else {
-                navigateToSend(sendPictureUri);
+            try {
+                File sendPictureFile = setImageUriandSave();
+                if (sendPictureFile == null) return;
+                Uri sendPictureUri = Uri.fromFile(sendPictureFile);
+                if (caller != null && Objects.equals(caller, "MessageActivity")) {
+                    navigateToMessage(sendPictureUri);
+                } else {
+                    navigateToSend(sendPictureUri);
+                }
+                cancelPhotoView();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            cancelPhotoView();
         } else if (i == R.id.btn_edit) {
             doodle();
+        } else if (i == R.id.btn_cancel_edit) {
+            drawingView.reset();
+            drawingView.setVisibility(View.GONE);
+            frmEdit.setVisibility(View.VISIBLE);
+            frmCancel.setVisibility(View.VISIBLE);
+            frmCancelEdit.setVisibility(View.GONE);
         }
     }
 }

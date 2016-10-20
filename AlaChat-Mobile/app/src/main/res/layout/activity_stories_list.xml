@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_stories_list"
     android:layout_width="match_parent"
@@ -8,13 +8,35 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.admin.alachat.StoriesListActivity">
-
-    <GridView
+    android:orientation="vertical"
+    tools:context="com.shivisuper.alachat_mobile.StoriesListActivity">
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/labelMyStory"
+        android:text="My Story"
+        />
+    <GridView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:numColumns="3"
         android:layout_alignParentStart="true"
+        android:layout_alignBottom="@id/labelMyStory"
+        android:id="@+id/myStories_layout" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/myStories_layout"
+        android:id="@+id/labelFriendsStory"
+        android:text="Friends Stories"
+        />
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@id/labelFriendsStory"
+        android:numColumns="3"
+        android:layout_alignParentStart="true"
         android:id="@+id/publicStories_layout" />
-</RelativeLayout>
+</LinearLayout>

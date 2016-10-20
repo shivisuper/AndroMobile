@@ -162,8 +162,14 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                messages.clear();
-                adapter.notifyDataSetChanged();
+                /*ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
+                messages.remove(chat);
+                adapter.notifyDataSetChanged();*/
+                ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
+                int index = messages.indexOf(chat);
+                Toast.makeText(MessageActivity.this, Integer.toString(index), Toast.LENGTH_SHORT).show();
+                /*messages.remove(index);
+                adapter.notifyDataSetChanged();*/
             }
 
             @Override
@@ -178,12 +184,11 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
-        //messages.clear();
         adapter.notifyDataSetChanged();
-    }
+    }*/
 
     public void showGallery () {
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -209,7 +214,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         camIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         camIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(camIntent);
-        finish();
+        //finish();
     }
 
     @Override
@@ -222,6 +227,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
             Uri uri = data.getData();
             StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
+
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

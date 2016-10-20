@@ -27,7 +27,11 @@ public class ViewImageActivity extends Activity {
 		final Uri imageUri = getIntent().getData();
         final boolean isGallery = getIntent().getBooleanExtra("gallery", false);
 		
-		Picasso.with(this).load(imageUri.toString()).into(imageView);
+		Picasso.with(this).
+                load(imageUri.toString()).
+                error(R.drawable.wrong).
+                placeholder( R.drawable.progress_animation ).
+                into(imageView);
         resultIntent = new Intent();
         resultIntent.setData(imageUri);
 		

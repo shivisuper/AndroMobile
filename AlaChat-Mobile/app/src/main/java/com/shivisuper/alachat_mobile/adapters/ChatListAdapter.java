@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import com.shivisuper.alachat_mobile.Constants;
 import com.shivisuper.alachat_mobile.R;
 import com.shivisuper.alachat_mobile.models.ChatMessage;
-//import com.shivisuper.alachat_mobile.widgets.Emoji;
 import com.squareup.picasso.Picasso;
 
 public class ChatListAdapter extends BaseAdapter {
@@ -76,6 +75,8 @@ public class ChatListAdapter extends BaseAdapter {
             try {
                 Picasso.with(context).
                         load(message.getImageUri()).
+                        error(R.drawable.wrong).
+                        placeholder( R.drawable.progress_animation ).
                         resize(150, 150).
                         into(holder.messageImageView);
             } catch(Exception f) {

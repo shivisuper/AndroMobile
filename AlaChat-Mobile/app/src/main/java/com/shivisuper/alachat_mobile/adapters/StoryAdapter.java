@@ -81,8 +81,12 @@ public class StoryAdapter extends ArrayAdapter<Story> {
         }
         Date cdate = new Date(System.currentTimeMillis());
         viewHolder.svCreatedBy.setText(story.getCreatedBy()+"'s Story");
-        Long dateDiff = (cdate.getTime() - story.getCreatedOn().getTime());
-        viewHolder.svTimeLeft.setText(dateDiff.toString()+" ago");
+        Long dateDiff;
+        if(story.getStoryPhotos().get(story.getStoryPhotos().size()-1).getPhotoDate()!=null)
+            dateDiff = (cdate.getTime() - story.getStoryPhotos().get(story.getStoryPhotos().size()-1).getPhotoDate().getTime())/(1000);
+        else
+            dateDiff = -1L;
+        viewHolder.svTimeLeft.setText(dateDiff.toString()+" sec ago");
 
 
 

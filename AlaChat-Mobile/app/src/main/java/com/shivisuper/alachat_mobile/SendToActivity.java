@@ -1,5 +1,6 @@
 package com.shivisuper.alachat_mobile;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -96,6 +97,11 @@ public class SendToActivity extends AppCompatActivity {
     {
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
+        final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
+                R.style.AppTheme_Light_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Saving as Memory...");
+        progressDialog.show();
         filePath.putFile(uriForPic).
                 addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -108,6 +114,7 @@ public class SendToActivity extends AppCompatActivity {
                             //getContentResolver().delete(uriForPic, null, null);
                             File tmpvar = new File(uriForPic.getPath());
                             tmpvar.delete();
+                            progressDialog.dismiss();
                             Intent storyIntent = new Intent(SendToActivity.this, StoryViewerActivity.class);
                             storyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(storyIntent);
@@ -140,6 +147,11 @@ public class SendToActivity extends AppCompatActivity {
         refMsgFrom =  database.getReference("stories/" + Constants.myself);;
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
+        final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
+                R.style.AppTheme_Light_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Saving as Story...");
+        progressDialog.show();
         filePath.putFile(uriForPic).
                 addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -152,7 +164,8 @@ public class SendToActivity extends AppCompatActivity {
                             //getContentResolver().delete(uriForPic, null, null);
                             File tmpvar = new File(uriForPic.getPath());
                             tmpvar.delete();
-                            Intent storyIntent = new Intent(SendToActivity.this, StoryViewerActivity.class);
+                            progressDialog.dismiss();
+                            Intent storyIntent = new Intent(SendToActivity.this, StoriesListActivity.class);
                             storyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(storyIntent);
                             finish();
@@ -174,47 +187,53 @@ public class SendToActivity extends AppCompatActivity {
     public void sendAsAMessage(final String userToSend)
     {
         final DatabaseReference refMsgTo = database.getReference("userDetails/" + userToSend + "/message");
-            mStorage = FirebaseStorage.getInstance().getReference();
-            StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
-            filePath.putFile(uriForPic).
-                    addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            //Toast.makeText(SendToActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-                            String theKey = getKey(userToSend, myself);
-                            try {
-                                ChatMessage chat1 = new ChatMessage(userToSend,
-                                        "Delivered",
-                                        myself,
-                                        theKey);
+        mStorage = FirebaseStorage.getInstance().getReference();
+        StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
+        final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
+                R.style.AppTheme_Light_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Sending to " + userToSend);
+        progressDialog.show();
+        filePath.putFile(uriForPic).
+                addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //Toast.makeText(SendToActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
+                        String theKey = getKey(userToSend, myself);
+                        try {
+                            ChatMessage chat1 = new ChatMessage(userToSend,
+                                    "Delivered",
+                                    myself,
+                                    theKey);
 
-                                ChatMessage chat2 = new ChatMessage(userToSend,
-                                        "",
-                                        Constants.myself, theKey,
-                                        "snap",
-                                        taskSnapshot.getDownloadUrl().toString());
+                            ChatMessage chat2 = new ChatMessage(userToSend,
+                                    "",
+                                    Constants.myself, theKey,
+                                    "snap",
+                                    taskSnapshot.getDownloadUrl().toString());
 
-                                refMsgTo.push().setValue(chat2);
-                                refMsgFrom.push().setValue(chat1);
-                                //getContentResolver().delete(uriForPic, null, null);
-                                File tmpvar = new File(uriForPic.getPath());
-                                tmpvar.delete();
-                                Intent friendlist = new Intent(SendToActivity.this, FriendListActivity.class);
-                                friendlist.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(friendlist);
-                                finish();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            refMsgTo.push().setValue(chat2);
+                            refMsgFrom.push().setValue(chat1);
+                            //getContentResolver().delete(uriForPic, null, null);
+                            File tmpvar = new File(uriForPic.getPath());
+                            tmpvar.delete();
+                            progressDialog.dismiss();
+                            Intent friendlist = new Intent(SendToActivity.this, FriendListActivity.class);
+                            friendlist.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(friendlist);
+                            finish();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    }).
-                    addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(SendToActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
-                            Log.e("upload: ", e.getMessage());
-                        }
-                    });
+                    }
+                }).
+                addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(SendToActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
+                        Log.e("upload: ", e.getMessage());
+                    }
+                });
     }
 
     public static String getKey(String name1, String name2) {
