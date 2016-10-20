@@ -1,9 +1,16 @@
 package com.shivisuper.alachat_mobile;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +21,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
@@ -47,12 +57,15 @@ public class SendToActivity extends AppCompatActivity {
     DatabaseReference storyReference;
     DatabaseReference refMsgFrom;
     Uri uriForPic;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_to);
         setTitle("Share With");
+        /*googleApiClient = new GoogleApiClient.Builder(this, this, this).
+                addApi(LocationServices.API).build();*/
         friendReference = database.getReference("userDetails/" + myself+"/friends");
         memoryReference = database.getReference("userDetails/" + myself+"/memories");
         storyReference = database.getReference("stories/" + myself);
@@ -93,10 +106,48 @@ public class SendToActivity extends AppCompatActivity {
         });
     }
 
+    /*@Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_ACCESS_COARSE_LOCATION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // All good!
+                } else {
+                    Toast.makeText(this, "Need your location!", Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }*/
+
+    /*private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitude = location.getLongitude();
+            latitude = location.getLatitude();
+        }
+    };*/
+
     public void saveAsAMemory()
     {
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
+        /*if ( ContextCompat.checkSelfPermission( this, android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
+
+            ActivityCompat.requestPermissions( this, new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
+                    LocationService.MY_PERMISSION_ACCESS_COURSE_LOCATION );
+        }*/
+        /*if ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        android.Manifest.permission.ACCESS_FINE_LOCATION ) !=
+                        PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission( getApplicationContext(),
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            return  ;
+        }
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        final double longitude = location.getLongitude();
+        final double latitude = location.getLatitude();*/
         final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
                 R.style.Light_Dialog);
         progressDialog.setIndeterminate(true);
@@ -115,9 +166,10 @@ public class SendToActivity extends AppCompatActivity {
                             File tmpvar = new File(uriForPic.getPath());
                             tmpvar.delete();
                             progressDialog.dismiss();
-                            Intent storyIntent = new Intent(SendToActivity.this, StoryViewerActivity.class);
+                            Toast.makeText(SendToActivity.this, "Added as a Memory", Toast.LENGTH_SHORT).show();
+                            /*Intent storyIntent = new Intent(SendToActivity.this, StoryViewerActivity.class);
                             storyIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(storyIntent);
+                            startActivity(storyIntent);*/
                             finish();
                         } catch (Exception e) {
                             e.printStackTrace();

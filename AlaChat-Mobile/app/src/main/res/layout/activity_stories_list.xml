@@ -10,18 +10,26 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="com.shivisuper.alachat_mobile.StoriesListActivity">
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Discovered Story"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/btn_discoveredStory"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/labelMyStory"
+        android:layout_alignBottom="@id/btn_discoveredStory"
         android:text="My Story"
         />
     <GridView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+
         android:numColumns="3"
-        android:layout_alignParentStart="true"
+
         android:layout_alignBottom="@id/labelMyStory"
         android:id="@+id/myStories_layout" />
     <TextView

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -39,7 +40,7 @@ public class StoriesListActivity extends AppCompatActivity {
     private StoryAdapter storyAdapter;
     private StoryAdapter myStoryAdapter;
 
-
+private Story dissStory;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -166,6 +167,62 @@ public class StoriesListActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
 
                 }
+            }
+        });
+
+
+        final DatabaseReference mydissStoryRef =  database.getReference("DiscoveryPhotos/");
+        dissStory = new Story();
+        final List<Photo> dissPhotos = new ArrayList<Photo>();
+        dissStory.setStoryPhotos(dissPhotos);
+        dissStory.setCreatedBy("Discovered: Superheros");
+
+        mydissStoryRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Photo currPhoto = new Photo();
+                currPhoto.setTimeout(5);
+                currPhoto.setPhotoPath((String)dataSnapshot.getValue());
+                dissPhotos.add(currPhoto);
+                dissStory.setStoryPhotos(dissPhotos);
+            }
+
+
+
+
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        Button mapButton = (Button) findViewById(R.id.btn_discoveredStory);
+        mapButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+
+
+                Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
+                myIntent.putExtra("Story", dissStory);
+                startActivity(myIntent);
             }
         });
 

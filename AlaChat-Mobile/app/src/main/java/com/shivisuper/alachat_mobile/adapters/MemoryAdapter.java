@@ -3,6 +3,7 @@ package com.shivisuper.alachat_mobile.adapters;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +20,7 @@ import com.shivisuper.alachat_mobile.models.Story;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Umer on 10/12/2016.
@@ -26,38 +28,11 @@ import java.util.List;
 
 public class MemoryAdapter extends ArrayAdapter<Photo> {
     private int resourceId;
-
-    public class ImageDownloader extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public ImageDownloader(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String url = urls[0];
-            Bitmap bitmap = null;
-            try {
-                InputStream in = new java.net.URL(url).openStream();
-                bitmap = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("MyApp", e.getMessage());
-            }
-            return bitmap;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
-
-    }
-
-
-
-
+    private Context context;
     public MemoryAdapter(Context context, int resource, List<Photo> objects) {
         super(context, resource, objects);
         this.resourceId =resource;
+        this.context = context;
     }
     public View getView(int position, View convertView, ViewGroup parent){
         // get one object content
@@ -79,12 +54,20 @@ public class MemoryAdapter extends ArrayAdapter<Photo> {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-
-
-
         if(photo.getPhotoPath()!=null) {
-            ImageDownloader imageDownLoader = new ImageDownloader(viewHolder.svImage);
-            imageDownLoader.execute(photo.getPhotoPath());
+            /*ImageDownloader imageDownLoader = new ImageDownloader(viewHolder.svImage);
+            imageDownLoader.execute(photo.getPhotoPath());*/
+            try {
+                Picasso.with(context).
+                        load(Uri.parse(photo.getPhotoPath())).
+                        error(R.drawable.wrong).
+                        placeholder( R.drawable.progress_animation ).
+                        resize(150, 230).
+                        into(viewHolder.svImage);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         //viewHolder.svImage.set
