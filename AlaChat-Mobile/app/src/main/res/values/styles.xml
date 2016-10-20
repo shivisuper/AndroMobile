@@ -18,11 +18,9 @@
         <item name="android:textColorPrimary">@color/iron</item>
         <item name="android:background">@color/primary</item>
     </style>
-    <style name="AppTheme.Light.Dialog" parent="Theme.AppCompat.Dialog">
+    <style name="Light_Dialog" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/iron</item>
         <item name="android:textColorPrimary">@color/black</item>
-        <item name="textColorSecondary">@color/black</item>
-        <item name="textColor">@color/black</item>
         <item name="android:background">@color/white</item>
     </style>
     <style name="chat_text_message_style">

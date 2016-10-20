@@ -98,7 +98,7 @@ public class SendToActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
         final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
-                R.style.AppTheme_Light_Dialog);
+                R.style.Light_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Saving as Memory...");
         progressDialog.show();
@@ -144,11 +144,11 @@ public class SendToActivity extends AppCompatActivity {
 
     public void saveAsAStory()
     {
-        refMsgFrom =  database.getReference("stories/" + Constants.myself);;
+        refMsgFrom =  database.getReference("stories/" + Constants.myself);
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
         final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
-                R.style.AppTheme_Light_Dialog);
+                R.style.Light_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Saving as Story...");
         progressDialog.show();
@@ -190,7 +190,7 @@ public class SendToActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference();
         StorageReference filePath = mStorage.child("Photo").child(uriForPic.getLastPathSegment());
         final ProgressDialog progressDialog = new ProgressDialog(SendToActivity.this,
-                R.style.AppTheme_Light_Dialog);
+                R.style.Light_Dialog);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Sending to " + userToSend);
         progressDialog.show();

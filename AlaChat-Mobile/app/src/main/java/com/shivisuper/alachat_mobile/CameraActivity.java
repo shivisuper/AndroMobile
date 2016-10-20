@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.shivisuper.alachat_mobile.models.User;
 import com.shivisuper.alachat_mobile.widgets.DrawingView;
 
@@ -43,6 +44,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -56,7 +58,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private FirebaseAuth mAuth;
     private String loginInfo;
     final String mDbChild = "userDetails";
+    final String mStories = "stories";
     private DatabaseReference usersRef;
+    private DatabaseReference thumbnailRef;
     private String userName;
     static final int MEDIA_TYPE_IMAGE = 1;
     private static final int SWIPE_MIN_DISTANCE = 120;
@@ -92,6 +96,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Bind(R.id.frame_cancel_edit) View frmCancelEdit;
     @Bind(R.id.frame_edit) View frmEdit;
     @Bind(R.id.frame_cancel) View frmCancel;
+    @Bind(R.id.btn_set_profile_pic) Button btnSetProfile;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -188,6 +193,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         surfaceView.setOnTouchListener(gestureListener);
         btnEdit.setOnClickListener(this);
         btnCancelEdit.setOnClickListener(this);
+        btnSetProfile.setOnClickListener(this);
     }
 
     class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -572,6 +578,47 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         drawingView.setVisibility(View.VISIBLE);
     }
 
+    public void setProfilePic () {
+        thumbnailRef = FirebaseDatabase.getInstance().getReference(mStories);
+        File sendPictureFile = setImageUriandSave();
+        if (sendPictureFile == null) return;
+        Uri sendPictureUri = Uri.fromFile(sendPictureFile);
+        /*thumbnailRef.child(myself).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for(DataSnapshot record: dataSnapshot.getChildren()) {
+                    if (Objects.equals(record.getKey(), "Thumbnail")) {
+                        Toast.makeText(CameraActivity.this, record.getValue().toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+        /*HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("Thumbnail", sendPictureFile.toString());
+        thumbnailRef.setValue(hashMap);*/
+
+    }
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int i, int i1, int i2) {
 
@@ -615,6 +662,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             frmEdit.setVisibility(View.VISIBLE);
             frmCancel.setVisibility(View.VISIBLE);
             frmCancelEdit.setVisibility(View.GONE);
+        } else if (i == R.id.btn_set_profile_pic) {
+            setProfilePic();
         }
     }
 }

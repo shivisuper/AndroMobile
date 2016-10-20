@@ -118,26 +118,32 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void updateMessage() {
-            Uri uri = uriFromCamera;
-            StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
-            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    ChatMessage chat1 = new ChatMessage(userToSend,
-                            "Delivered",
-                            myself,
-                            theKey);
-                    ChatMessage chat2 = new ChatMessage(userToSend,
-                            "",
-                            myself,
-                            theKey,
-                            "snap",
-                            taskSnapshot.getDownloadUrl().toString()
-                    );
-                    refMsgTo.push().setValue(chat2);
-                    refMsgFrom.push().setValue(chat1);
-                }
-            });
+        Uri uri = uriFromCamera;
+        StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
+        final ProgressDialog progressDialog = new ProgressDialog(MessageActivity.this,
+                R.style.Light_Dialog);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Saving as Story...");
+        progressDialog.show();
+        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                ChatMessage chat1 = new ChatMessage(userToSend,
+                        "Delivered",
+                        myself,
+                        theKey);
+                ChatMessage chat2 = new ChatMessage(userToSend,
+                        "",
+                        myself,
+                        theKey,
+                        "snap",
+                        taskSnapshot.getDownloadUrl().toString()
+                );
+                refMsgTo.push().setValue(chat2);
+                refMsgFrom.push().setValue(chat1);
+                progressDialog.dismiss();
+            }
+        });
     }
 
     public void initiliazeFirebase () {
@@ -162,14 +168,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                /*ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
-                messages.remove(chat);
-                adapter.notifyDataSetChanged();*/
-                ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
-                int index = messages.indexOf(chat);
-                Toast.makeText(MessageActivity.this, Integer.toString(index), Toast.LENGTH_SHORT).show();
-                /*messages.remove(index);
-                adapter.notifyDataSetChanged();*/
+                messages.clear();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
