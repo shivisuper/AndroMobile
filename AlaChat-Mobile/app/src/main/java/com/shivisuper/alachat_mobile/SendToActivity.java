@@ -27,11 +27,11 @@ import com.shivisuper.alachat_mobile.models.ChatMessage;
 import com.shivisuper.alachat_mobile.models.SentToActivityModel;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.shivisuper.alachat_mobile.Constants.myself;
 import static com.shivisuper.alachat_mobile.Constants.timerVal;
 
 public class SendToActivity extends AppCompatActivity {
@@ -52,15 +52,14 @@ public class SendToActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_to);
         setTitle("Share With");
-        friendReference = database.getReference("userDetails/"+Constants.myself+"/friends");
-        memoryReference = database.getReference("userDetails/"+Constants.myself+"/memories");
-        storyReference = database.getReference("stories/"+Constants.myself);
-        refMsgFrom =  database.getReference("userDetails/" + Constants.myself + "/message");
+        friendReference = database.getReference("userDetails/" + myself+"/friends");
+        memoryReference = database.getReference("userDetails/" + myself+"/memories");
+        storyReference = database.getReference("stories/" + myself);
+        refMsgFrom =  database.getReference("userDetails/" + myself + "/message");
         uriForPic = getIntent().getData();
         ArrayList<String> mFriends = new ArrayList<>();
         Button AddAsAStoryBtn = (Button) findViewById(R.id.AddAsAStoryBtn);
         Button AddAsAMemoryBtn = (Button) findViewById(R.id.AddAsAMemory);
-        //Button takeImageBtn = (Button) findViewById(R.id.takeImageBtn);
 
         getFriendsList();
 
@@ -101,7 +100,6 @@ public class SendToActivity extends AppCompatActivity {
                 addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        //String theKey = getKey(userToSend, Constants.myself);
                         try {
                             SentToActivityModel data = new
                                     SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),
@@ -146,7 +144,6 @@ public class SendToActivity extends AppCompatActivity {
                 addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        //String theKey = getKey(userToSend, Constants.myself);
                         try {
                             SentToActivityModel data = new
                                     SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),
@@ -184,15 +181,21 @@ public class SendToActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             //Toast.makeText(SendToActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-                            String theKey = getKey(userToSend, Constants.myself);
+                            String theKey = getKey(userToSend, myself);
                             try {
-                                ChatMessage chat = new ChatMessage(userToSend,
+                                ChatMessage chat1 = new ChatMessage(userToSend,
+                                        "Delivered",
+                                        myself,
+                                        theKey);
+
+                                ChatMessage chat2 = new ChatMessage(userToSend,
                                         "",
                                         Constants.myself, theKey,
                                         "snap",
                                         taskSnapshot.getDownloadUrl().toString());
-                                refMsgTo.push().setValue(chat);
-                                refMsgFrom.push().setValue(chat);
+
+                                refMsgTo.push().setValue(chat2);
+                                refMsgFrom.push().setValue(chat1);
                                 //getContentResolver().delete(uriForPic, null, null);
                                 File tmpvar = new File(uriForPic.getPath());
                                 tmpvar.delete();

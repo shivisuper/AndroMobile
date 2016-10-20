@@ -14,17 +14,47 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:id="@+id/img_view"/>
+
+        <com.shivisuper.alachat_mobile.widgets.DrawingView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:visibility="gone"
+            android:id="@+id/drawing_view" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="20dp">
+            <Button
+                android:id="@+id/btn_edit"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:background="@drawable/round_button"
+                />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/edit"
+                android:contentDescription="@string/cancel"
+                android:layout_gravity="center"/>
+        </FrameLayout>
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="38dp"
             android:layout_marginBottom="20dp">
             <Button
                 android:id="@+id/btnSave"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:background="@drawable/round_button"
                 />
@@ -39,14 +69,14 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="50dp"
-            android:layout_marginBottom="20dp">
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp">
             <Button
                 android:id="@+id/btnCancel"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_gravity="center"
                 android:background="@drawable/round_button"
                 />
@@ -54,7 +84,7 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/basket"
+                android:src="@drawable/delete"
                 android:contentDescription="@string/cancel"
                 android:layout_gravity="center"/>
         </FrameLayout>
@@ -64,13 +94,12 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="100dp"
+            android:layout_marginEnd="50dp"
             android:layout_marginBottom="20dp">
             <Button
                 android:id="@+id/btnShare"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:background="@drawable/round_button"
                 />
@@ -78,12 +107,10 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/common_google_signin_btn_text_light_normal"
-                android:contentDescription="@string/cancel"
+                android:src="@drawable/send"
+                android:contentDescription="@string/send"
                 android:layout_gravity="center"/>
         </FrameLayout>
-
-
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"

@@ -54,6 +54,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     private Button sendbtn;
     private Button btnCamera;
     private String theKey;
+    private Uri uriFromCamera;
 
     public static String getKey(String name1, String name2) {
 
@@ -75,6 +76,11 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         setTitle(userToSend);
         setUIComponents();
         initiliazeFirebase();
+        String caller = getIntent().getStringExtra("caller");
+        if (caller != null && Objects.equals(caller, "Camera")) {
+            uriFromCamera = getIntent().getData();
+            updateMessage();
+        }
     }
 
     public void setUIComponents () {
@@ -109,6 +115,29 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                 }
             }
         });
+    }
+
+    public void updateMessage() {
+            Uri uri = uriFromCamera;
+            StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ChatMessage chat1 = new ChatMessage(userToSend,
+                            "Delivered",
+                            myself,
+                            theKey);
+                    ChatMessage chat2 = new ChatMessage(userToSend,
+                            "",
+                            myself,
+                            theKey,
+                            "snap",
+                            taskSnapshot.getDownloadUrl().toString()
+                    );
+                    refMsgTo.push().setValue(chat2);
+                    refMsgFrom.push().setValue(chat1);
+                }
+            });
     }
 
     public void initiliazeFirebase () {
@@ -177,7 +206,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
     public void showCamera () {
         Intent camIntent = new Intent(MessageActivity.this, CameraActivity.class);
         camIntent.putExtra("caller", "MessageActivity");
-        startActivityForResult(camIntent, CAMERA_INTENT);
+        camIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        camIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(camIntent);
+        finish();
     }
 
     @Override
@@ -256,27 +288,6 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                             }
                         });
             }
-        } else if (requestCode == CAMERA_INTENT && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
-            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    ChatMessage chat1 = new ChatMessage(userToSend,
-                            "Image Delivered",
-                            myself,
-                            theKey);
-                    ChatMessage chat2 = new ChatMessage(userToSend,
-                            "",
-                            myself,
-                            theKey,
-                            "snap",
-                            taskSnapshot.getDownloadUrl().toString()
-                            );
-                    refMsgTo.push().setValue(chat2);
-                    refMsgFrom.push().setValue(chat1);
-                }
-            });
         }
     }
 

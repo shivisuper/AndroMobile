@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.shivisuper.alachat_mobile.models.User;
+import com.shivisuper.alachat_mobile.widgets.DrawingView;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,7 +66,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     private SurfaceHolder mHolder;
     private Camera mCamera;
     private Camera.Parameters parameters;
-    private Bitmap photo;
+    private Bitmap snapTaken;
+    private Bitmap doodlePic;
     private static int currentCamID;
     int mPictureWidth = 1920;//1280;
     int mPictureHeight = 1080;//720;
@@ -83,6 +87,8 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Bind(R.id.btnSave) Button btnSave;
     @Bind(R.id.btnCancel) Button btnCancel;
     @Bind(R.id.btnShare) Button btnSend;
+    @Bind(R.id.drawing_view) DrawingView drawingView;
+    @Bind(R.id.btn_edit) Button btnEdit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -177,6 +183,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             }
         };
         surfaceView.setOnTouchListener(gestureListener);
+        btnEdit.setOnClickListener(this);
     }
 
     class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -222,6 +229,16 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         public boolean onDown(MotionEvent e) {
             return true;
         }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        /*if (intent != null) {
+            Toast.makeText(CameraActivity.this, intent.getStringExtra("caller"),
+                    Toast.LENGTH_SHORT).show();
+        }*/
+        setIntent(intent);
     }
 
     private static File getOutputMediaFile(int type){
@@ -291,18 +308,24 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 BitmapFactory.Options scalingOptions = new BitmapFactory.Options();
                 /*scalingOptions.inSampleSize = camera.getParameters().getPictureSize().width /
                                 imgView.getMeasuredWidth();*/
-                photo = BitmapFactory.decodeByteArray(data, 0,
+                snapTaken = BitmapFactory.decodeByteArray(data, 0,
                         data.length, scalingOptions);
                 if(currentCamID == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                    photo = rotateImage(photo, 90);
+                    snapTaken = rotateImage(snapTaken, 90);
                 }
                 else {
-                    photo = rotateImage(photo, 270);
+                    snapTaken = rotateImage(snapTaken, 270);
+                }
+                BitmapDrawable ob = new BitmapDrawable(getResources(), snapTaken);
+                if(Build.VERSION.SDK_INT >= 16) {
+                    drawingView.setBackground(ob);
+                } else {
+                    drawingView.setBackgroundDrawable(ob);
                 }
                 camera.stopPreview();
                 cameraPreview.setVisibility(View.GONE);
                 photoPreview.setVisibility(View.VISIBLE);
-                imgView.setImageBitmap(photo);
+                imgView.setImageBitmap(snapTaken);
             }
         });
     }
@@ -315,37 +338,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         source.recycle();
         return rotatedImg;
     }
-
-    //in case of scanning multiple files together
-    /*private ArrayList<String> mFilesToScan;
-
-    *//**
-     * Adds to the list of paths to scan when a media scan is started.
-     *
-     * @see {@link #scanMediaFiles()}
-     * @param path
-     *//*
-    private void addToScanList(String path) {
-        if (mFilesToScan == null)
-            mFilesToScan = new ArrayList<String>();
-        mFilesToScan.add(path);
-    }
-
-    *//**
-     * Initiates a media scan of each of the files added to the scan list.
-     *
-     * @see {@see #addToScanList(String)}
-     *//*
-    private void scanMediaFiles() {
-        if ((mFilesToScan != null) && (!mFilesToScan.isEmpty())) {
-            for (String path : mFilesToScan) {
-                scanMedia(path);
-            }
-            mFilesToScan.clear();
-        } else {
-            Log.e(TAG, "Media scan requested when nothing to scan");
-        }
-    }*/
 
     public void hideFlash(boolean hide) {
         if(hide) {
@@ -368,8 +360,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
         FileOutputStream fos = null;
         try {
+            drawingView.setDrawingCacheEnabled(true);
+            doodlePic = drawingView.getDrawingCache();
             fos = new FileOutputStream(pictureFile);
-            photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            //snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             Toast.makeText(CameraActivity.this, "Imaged saved successfully!",
                     Toast.LENGTH_SHORT).show();
             scanMedia(pictureFile.getPath());
@@ -396,9 +391,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
         FileOutputStream fos = null;
         try {
+            drawingView.setDrawingCacheEnabled(true);
+            doodlePic = drawingView.getDrawingCache();
             fos = new FileOutputStream(sendPictureFile);
-            photo.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            //scanMedia(sendPictureFile.getPath());
+            //snapTaken.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            doodlePic.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         } catch (FileNotFoundException e) {
             Log.d(TAG, "File not found: " + e.getMessage());
         } finally {
@@ -423,11 +420,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     public void navigateToMessage(Uri sendPictureUri) {
-
         Intent sendToMessage = new Intent(this, MessageActivity.class);
         sendToMessage.setData(sendPictureUri);
+        sendToMessage.putExtra("caller", "Camera");
         startActivity(sendToMessage);
-        setResult(RESULT_OK, sendToMessage);
+        //setResult(RESULT_OK, sendToMessage);
     }
 
     public void cancelPhotoView() {
@@ -546,13 +543,17 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     }
 
     public void releaseCamera() {
-        
+
         if(mCamera != null) {
             mCamera.stopPreview();
             mHolder.removeCallback(this);
             mCamera.release();
             mCamera = null;
         }
+    }
+
+    public void doodle () {
+        drawingView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -575,9 +576,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             saveImage();
         } else if (i == R.id.btnCancel) {
             cancelPhotoView();
-        }
-        else if (i == R.id.btnShare)
-        {
+        } else if (i == R.id.btnShare) {
             String caller = getIntent().getStringExtra("caller");
             File sendPictureFile = setImageUriandSave();
             if (sendPictureFile == null) return;
@@ -587,6 +586,9 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             } else {
                 navigateToSend(sendPictureUri);
             }
+            cancelPhotoView();
+        } else if (i == R.id.btn_edit) {
+            doodle();
         }
     }
 }
