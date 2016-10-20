@@ -7,6 +7,7 @@ public class ChatMessage {
     private String sentBy;
     private String theKey;
     private String imageUri;
+    private String picType;
 
     public ChatMessage() {
 
@@ -18,15 +19,15 @@ public class ChatMessage {
         this.message = message;
         this.sentBy = sentBy;
         this.theKey = theKey;
-
     }
 
     public ChatMessage(String sendTo, String message, String sentBy,
-                       String theKey, String imageUri) {
+                       String theKey, String picType, String imageUri) {
         this.sendTo = sendTo;
         this.message = message;
         this.sentBy = sentBy;
         this.theKey = theKey;
+        this.picType = picType;
         this.imageUri = imageUri;
     }
 
@@ -52,7 +53,9 @@ public class ChatMessage {
         return imageUri;
     }
 
-
+    public String getPicType() {
+        return picType;
+    }
 }
 
 

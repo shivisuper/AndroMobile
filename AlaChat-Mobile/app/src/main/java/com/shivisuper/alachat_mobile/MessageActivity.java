@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -23,7 +22,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -31,7 +29,9 @@ import com.shivisuper.alachat_mobile.adapters.ChatListAdapter;
 import com.shivisuper.alachat_mobile.models.ChatMessage;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
+import static com.shivisuper.alachat_mobile.Constants.myself;
 import static com.shivisuper.alachat_mobile.Constants.userToSend;
 
 public class MessageActivity extends AppCompatActivity implements View.OnClickListener {
@@ -39,19 +39,20 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
     private static final int GALLERY_INTENT = 2;
     private static final int VIEW_IMAGE_INTENT = 10;
+    private static final int CAMERA_INTENT = 11;
     private StorageReference mStorage;
     private ProgressDialog mProgressDialog;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference refMsgFrom;
     private DatabaseReference refMsgTo;
     private Query myRef;
-    private Query qryDelete;
     private ArrayList<ChatMessage> messages;
     private ChatListAdapter adapter;
     private ListView messageLst;
     private EditText messageTxt;
     private ImageButton imageButton;
     private Button sendbtn;
+    private Button btnCamera;
     private String theKey;
 
     public static String getKey(String name1, String name2) {
@@ -85,6 +86,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         imageButton.setOnClickListener(this);
         sendbtn = (Button) findViewById(R.id.sendBtn);
         sendbtn.setOnClickListener(this);
+        btnCamera = (Button) findViewById(R.id.btn_shutter);
+        btnCamera.setOnClickListener(this);
         messageLst.setAdapter(adapter);
         messageLst.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -95,6 +98,10 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
                         Intent toViewImgAc = new Intent(MessageActivity.this,
                                 ViewImageActivity.class);
                         toViewImgAc.setData(Uri.parse(msg.getImageUri()));
+                        if (Objects.equals(msg.getPicType(), "image"))
+                            toViewImgAc.putExtra("gallery", true);
+                        else
+                            toViewImgAc.putExtra("gallery", false);
                         startActivityForResult(toViewImgAc, VIEW_IMAGE_INTENT);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -126,8 +133,7 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                ChatMessage chat = dataSnapshot.getValue(ChatMessage.class);
-                messages.remove(chat);
+                messages.clear();
                 adapter.notifyDataSetChanged();
             }
 
@@ -141,6 +147,13 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //messages.clear();
+        adapter.notifyDataSetChanged();
     }
 
     public void showGallery () {
@@ -161,6 +174,12 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    public void showCamera () {
+        Intent camIntent = new Intent(MessageActivity.this, CameraActivity.class);
+        camIntent.putExtra("caller", "MessageActivity");
+        startActivityForResult(camIntent, CAMERA_INTENT);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -170,15 +189,14 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
         refMsgFrom = database.getReference("userDetails/" + Constants.myself + "/message");
         if (requestCode == GALLERY_INTENT && resultCode == RESULT_OK) {
             Uri uri = data.getData();
-            //Log.v("uriData", uri.toString());
             StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
             filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    //Toast.makeText(MessageActivity.this, "UploadDone", Toast.LENGTH_SHORT).show();
                     ChatMessage chat = new ChatMessage(userToSend,
                             "",
                             Constants.myself, theKey,
+                            "image",
                             taskSnapshot.getDownloadUrl().toString());
                     refMsgTo.push().setValue(chat);
                     refMsgFrom.push().setValue(chat);
@@ -186,51 +204,79 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
             });
         } else if (requestCode == VIEW_IMAGE_INTENT && resultCode == RESULT_OK) {
             final Intent retData = data;
-            /*refMsgTo = database.getReference("userDetails/" + userToSend + "/message");
-            refMsgFrom = database.getReference("userDetails/" + Constants.myself + "/message");*/
-            StorageReference filepath = mStorage.child(retData.getData().getLastPathSegment());
-            filepath.delete().
-                    addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            refMsgTo.child("imageUri").
-                                    addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            if (dataSnapshot.getValue() != null) {
-                                                Log.v("onDataChange: ",
-                                                        dataSnapshot.getValue().toString());
+            String picType = retData.getStringExtra("picType");
+            if (Objects.equals(picType, "snap")) {
+                StorageReference filepath = mStorage.child(retData.getData().getLastPathSegment());
+                filepath.delete().
+                        addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                refMsgFrom.addChildEventListener(new ChildEventListener() {
+                                    @Override
+                                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                                        for (DataSnapshot record : dataSnapshot.getChildren()) {
+                                            if (Objects.equals(record.getKey(), "imageUri")) {
+                                                if (Objects.equals(record.getValue(),
+                                                        retData.getData().toString())) {
+                                                    record.getRef().getParent().removeValue();
+                                                }
                                             }
                                         }
+                                    }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                                        }
-                                    });
-                            refMsgFrom.child("imageUri").
-                                    addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            //dataSnapshot.getRef().setValue(null);
-                                        }
+                                    }
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                    @Override
+                                    public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-                                        }
-                                    });
-                        }
-                    }).
-                    addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(MessageActivity.this,
-                                    getResources().getString(R.string.unable_to_remove),
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                                    }
+
+                                    @Override
+                                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        }).
+                        addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(MessageActivity.this,
+                                        getResources().getString(R.string.unable_to_remove),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+        } else if (requestCode == CAMERA_INTENT && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            StorageReference filePath = mStorage.child("Photo").child(uri.getLastPathSegment());
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    ChatMessage chat1 = new ChatMessage(userToSend,
+                            "Image Delivered",
+                            myself,
+                            theKey);
+                    ChatMessage chat2 = new ChatMessage(userToSend,
+                            "",
+                            myself,
+                            theKey,
+                            "snap",
+                            taskSnapshot.getDownloadUrl().toString()
+                            );
+                    refMsgTo.push().setValue(chat2);
+                    refMsgFrom.push().setValue(chat1);
+                }
+            });
         }
     }
 
@@ -241,6 +287,8 @@ public class MessageActivity extends AppCompatActivity implements View.OnClickLi
             showGallery();
         } else if (i == R.id.sendBtn) {
             sendMessage();
+        } else if (i == R.id.btn_shutter) {
+            showCamera();
         }
     }
 }

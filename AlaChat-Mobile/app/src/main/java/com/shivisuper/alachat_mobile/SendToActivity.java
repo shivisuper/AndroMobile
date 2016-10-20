@@ -32,6 +32,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static com.shivisuper.alachat_mobile.Constants.timerVal;
+
 public class SendToActivity extends AppCompatActivity {
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -101,7 +103,9 @@ public class SendToActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //String theKey = getKey(userToSend, Constants.myself);
                         try {
-                            SentToActivityModel data = new SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),"5",getDate());
+                            SentToActivityModel data = new
+                                    SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),
+                                    Integer.toString(timerVal),getDate());
                             memoryReference.push().setValue(data);
                             //getContentResolver().delete(uriForPic, null, null);
                             File tmpvar = new File(uriForPic.getPath());
@@ -126,7 +130,8 @@ public class SendToActivity extends AppCompatActivity {
 
     public String getDate()
     {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        //DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
         Date date = new Date();
         return (dateFormat.format(date));
     }
@@ -143,7 +148,9 @@ public class SendToActivity extends AppCompatActivity {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         //String theKey = getKey(userToSend, Constants.myself);
                         try {
-                            SentToActivityModel data = new SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),"5",getDate());
+                            SentToActivityModel data = new
+                                    SentToActivityModel(taskSnapshot.getDownloadUrl().toString(),
+                                    Integer.toString(timerVal),getDate());
                             storyReference.push().setValue(data);
                             //getContentResolver().delete(uriForPic, null, null);
                             File tmpvar = new File(uriForPic.getPath());
@@ -182,6 +189,7 @@ public class SendToActivity extends AppCompatActivity {
                                 ChatMessage chat = new ChatMessage(userToSend,
                                         "",
                                         Constants.myself, theKey,
+                                        "snap",
                                         taskSnapshot.getDownloadUrl().toString());
                                 refMsgTo.push().setValue(chat);
                                 refMsgFrom.push().setValue(chat);

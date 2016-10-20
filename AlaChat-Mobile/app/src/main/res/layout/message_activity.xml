@@ -15,6 +15,7 @@
         android:layout_alignParentEnd="true"
         android:id="@+id/sendBtn"
         android:background="@android:color/holo_green_light"
+        android:layout_marginBottom="0dp"
         android:layout_height="30dp" />
 
     <EditText
@@ -24,7 +25,30 @@
         android:ems="10"
         android:id="@+id/messageTxt"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
         android:layout_toStartOf="@+id/sendBtn" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="0dp">
+        <Button
+            android:id="@+id/btn_shutter"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:background="@drawable/round_button"
+            />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/shutter"
+            android:contentDescription="@string/shutter"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
     <ListView
         android:layout_width="match_parent"

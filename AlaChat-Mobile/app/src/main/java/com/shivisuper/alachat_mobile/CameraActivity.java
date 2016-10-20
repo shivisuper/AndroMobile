@@ -388,12 +388,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
     }
 
-    public void sendToActivity()
-    {
+    public File setImageUriandSave () {
         File sendPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
         if (sendPictureFile == null){
             Log.d(TAG, "Error creating media file, check storage permissions");
-            return;
+            return null;
         }
         FileOutputStream fos = null;
         try {
@@ -412,10 +411,23 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 }
             }
         }
-        Uri sendPictureUri = Uri.fromFile(sendPictureFile);
+        return sendPictureFile;
+    }
+
+    public void navigateToSend(Uri sendPictureUri)
+    {
         Intent sendToActivity = new Intent(this, SendToActivity.class);
         sendToActivity.setData(sendPictureUri);
         startActivity(sendToActivity);
+        setResult(RESULT_OK, sendToActivity);
+    }
+
+    public void navigateToMessage(Uri sendPictureUri) {
+
+        Intent sendToMessage = new Intent(this, MessageActivity.class);
+        sendToMessage.setData(sendPictureUri);
+        startActivity(sendToMessage);
+        setResult(RESULT_OK, sendToMessage);
     }
 
     public void cancelPhotoView() {
@@ -566,7 +578,15 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         }
         else if (i == R.id.btnShare)
         {
-            sendToActivity();
+            String caller = getIntent().getStringExtra("caller");
+            File sendPictureFile = setImageUriandSave();
+            if (sendPictureFile == null) return;
+            Uri sendPictureUri = Uri.fromFile(sendPictureFile);
+            if (caller != null && Objects.equals(caller, "MessageActivity")) {
+                navigateToMessage(sendPictureUri);
+            } else {
+                navigateToSend(sendPictureUri);
+            }
         }
     }
 }

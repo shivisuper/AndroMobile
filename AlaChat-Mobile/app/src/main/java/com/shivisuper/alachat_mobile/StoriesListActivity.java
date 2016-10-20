@@ -32,7 +32,7 @@ public class StoriesListActivity extends AppCompatActivity {
 
 
     private List<Story> stories = new ArrayList<>();
-   private List<Photo> currPhotos = new ArrayList<Photo>();
+    private List<Photo> currPhotos = new ArrayList<Photo>();
     private StoryAdapter storyAdapter;
 
 
@@ -41,20 +41,10 @@ public class StoriesListActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stories_list);
-       // getActionBar().setTitle(getTheme().toString());
-       // getActionBar().setTitle("Stories");
-        // getSupportActionBar().setTitle("All crazy stuff");
-
-
-
         GridView gridView;
-
         Date cdate = new Date(System.currentTimeMillis());
-
-//
-
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-       final DatabaseReference myStoryRef =  database.getReference("stories/");
+        final DatabaseReference myStoryRef =  database.getReference("stories/");
         myStoryRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -62,32 +52,27 @@ public class StoriesListActivity extends AppCompatActivity {
                 currStory.setCreatedBy(dataSnapshot.getKey());
                 Map<String,Object> a = new HashMap<String, Object>();
                 List<Photo> currPhotos = new ArrayList<Photo>();
-
                 for (DataSnapshot photoSnapshot: dataSnapshot.getChildren()) {
-                    if(photoSnapshot.getKey().contains("Photo")) {
-                        a.put(photoSnapshot.getKey(), photoSnapshot.getValue());
-                        Photo currPhoto = new Photo();
-                        if ((((HashMap) a.get(photoSnapshot.getKey())).get("Timeout")) != null)
-                            currPhoto.setTimeout(((Long) (((HashMap) a.get(photoSnapshot.getKey())).get("Timeout"))).intValue());
-                        currPhoto.setPhotoPath((String) (((HashMap) a.get(photoSnapshot.getKey())).get("PhotoPath")));
+                    //if(photoSnapshot.getKey().contains("Photo")) {
+                    a.put(photoSnapshot.getKey(), photoSnapshot.getValue());
+                    Photo currPhoto = new Photo();
 
-
-                        currPhotos.add(currPhoto);
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
+                    try {
+                        currPhoto.setPhotoDate(dateFormat.parse((String) (((HashMap) a.get(photoSnapshot.getKey())).get("Date"))));
                     }
-                    else
+                    catch(ParseException e)
                     {
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss aa");
-
-                        try {
-                            currStory.setCreatedOn(dateFormat.parse((String) photoSnapshot.getValue()));
-                        }
-                        catch(ParseException e)
-                        {
-
-                            currStory.setCreatedOn(new Date(45545455));
-                        }
-
+                        currStory.setCreatedOn(new Date(45545455));
                     }
+
+
+                    if ((((HashMap) a.get(photoSnapshot.getKey())).get("Timeout")) != null)
+                        currPhoto.setTimeout(((Long) (((HashMap) a.get(photoSnapshot.getKey())).get("Timeout"))).intValue());
+                    currPhoto.setPhotoPath((String) (((HashMap) a.get(photoSnapshot.getKey())).get("PhotoPath")));
+
+
+                    currPhotos.add(currPhoto);
                 }
                 currStory.setStoryPhotos(currPhotos);
                 stories.add(currStory);
@@ -129,18 +114,18 @@ public class StoriesListActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // remove the clicked item from arraylist
-               if(stories.get(position).getStoryPhotos()!=null) {
-                   Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
-                   myIntent.putExtra("Story", stories.get(position));
-                   startActivity(myIntent);
-               }
+                if(stories.get(position).getStoryPhotos()!=null) {
+                    Intent myIntent = new Intent(StoriesListActivity.this, StoryViewerActivity.class);
+                    myIntent.putExtra("Story", stories.get(position));
+                    startActivity(myIntent);
+                }
                 else
-               {
+                {
 
-                   Toast.makeText(StoriesListActivity.this, "No photos in this story!",
-                           Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StoriesListActivity.this, "No photos in this story!",
+                            Toast.LENGTH_SHORT).show();
 
-               }
+                }
             }
         });
 

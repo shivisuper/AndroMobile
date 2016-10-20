@@ -14,6 +14,8 @@ import static com.shivisuper.alachat_mobile.Constants.timerVal;
 
 public class ViewImageActivity extends Activity {
 
+    Intent resultIntent;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -23,24 +25,30 @@ public class ViewImageActivity extends Activity {
 		ImageView imageView = (ImageView)findViewById(R.id.imageView);
 		
 		final Uri imageUri = getIntent().getData();
+        final boolean isGallery = getIntent().getBooleanExtra("gallery", false);
 		
 		Picasso.with(this).load(imageUri.toString()).into(imageView);
-        final Intent resultIntent = new Intent();
+        resultIntent = new Intent();
         resultIntent.setData(imageUri);
 		
 		Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-                setResult(RESULT_OK, resultIntent);
-				finish();
+                if (!isGallery) {
+                    setResult(RESULT_OK, resultIntent);
+                    resultIntent.putExtra("picType", "snap");
+                    finish();
+                }
 			}
 		}, timerVal*1000);
 	}
 
-	/*private void setupActionBar() {
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
-	}*/
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        setResult(RESULT_OK, resultIntent);
+        resultIntent.putExtra("picType", "image");
+        finish();
+    }
 }

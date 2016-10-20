@@ -22,7 +22,7 @@ import com.shivisuper.alachat_mobile.models.Photo;
 import com.shivisuper.alachat_mobile.models.Story;
 
 public class StoryViewerActivity extends AppCompatActivity {
- Boolean isLoaded = false;
+    Boolean isLoaded = false;
     List<Bitmap> storyImages;
     private Handler progressBarHandler;
     private ProgressBar progressBar;
@@ -89,14 +89,6 @@ public class StoryViewerActivity extends AppCompatActivity {
         }
     }
 
-
-
-
-
-
-
-
-
     class downloader implements Runnable {
         @Override
         public void run() {
@@ -111,9 +103,6 @@ public class StoryViewerActivity extends AppCompatActivity {
                     Log.e("MyApp", e.getMessage());
                 }
                 storyImages.add(bitmap);
-
-
-
             }
             downloadHandler.post(new Runnable() {
                 @Override
@@ -123,19 +112,12 @@ public class StoryViewerActivity extends AppCompatActivity {
             });
 
             Log.e("Downloader", "Done");
-
         }
     }
-
-
-
-
-
 
     private int mInterval = 2000; // 5 seconds by default, can be changed later
     private Handler mHandler;
     private Handler downloadHandler;
-
     int photoNum = 0;
     Story story;
     @Override
@@ -143,14 +125,13 @@ public class StoryViewerActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-//Remove notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//set content view AFTER ABOVE sequence (to avoid crash)
         setContentView(R.layout.activity_story_viewer);
 
         Bundle bundle = getIntent().getExtras();
         story = (Story) getIntent().getSerializableExtra("Story");
-        setTitle(story.getStoryName());
+        //setTitle(story.getStoryName());
+        setTitle(story.getCreatedBy());
         progressBar = (ProgressBar) findViewById(R.id.timeLeft);
         ImageView imageView= (ImageView) findViewById(R.id.photoView);
         imageView.setVisibility(View.INVISIBLE);
