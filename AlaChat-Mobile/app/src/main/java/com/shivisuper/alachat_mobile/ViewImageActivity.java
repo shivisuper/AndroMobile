@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import static com.shivisuper.alachat_mobile.Constants.timerVal;
@@ -26,6 +27,7 @@ public class ViewImageActivity extends Activity {
 		
 		final Uri imageUri = getIntent().getData();
         final boolean isGallery = getIntent().getBooleanExtra("gallery", false);
+        //Toast.makeText(this, Integer.toString(timerVal), Toast.LENGTH_SHORT).show();
 		
 		Picasso.with(this).
                 load(imageUri.toString()).

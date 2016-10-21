@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="timeout_array">
+        <item>5 sec</item>
+        <item>10 sec</item>
+        <item>15 sec</item>
+    </string-array>
+</resources>

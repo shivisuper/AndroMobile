@@ -21,8 +21,11 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,7 +55,7 @@ import java.util.Objects;
 import static com.shivisuper.alachat_mobile.Constants.myself;
 
 public class CameraActivity extends AppCompatActivity implements SurfaceHolder.Callback,
-        View.OnClickListener {
+        View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "CameraActivity";
     private FirebaseAuth mAuth;
@@ -96,7 +99,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
     @Bind(R.id.frame_cancel_edit) View frmCancelEdit;
     @Bind(R.id.frame_edit) View frmEdit;
     @Bind(R.id.frame_cancel) View frmCancel;
-    @Bind(R.id.btn_set_profile_pic) Button btnSetProfile;
+    @Bind(R.id.spinner) Spinner spinner;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -193,7 +196,11 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         surfaceView.setOnTouchListener(gestureListener);
         btnEdit.setOnClickListener(this);
         btnCancelEdit.setOnClickListener(this);
-        btnSetProfile.setOnClickListener(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.timeout_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
     }
 
     class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
@@ -577,47 +584,6 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
         drawingView.setVisibility(View.VISIBLE);
     }
 
-    public void setProfilePic () {
-        thumbnailRef = FirebaseDatabase.getInstance().getReference(mStories);
-        File sendPictureFile = setImageUriandSave();
-        if (sendPictureFile == null) return;
-        Uri sendPictureUri = Uri.fromFile(sendPictureFile);
-        /*thumbnailRef.child(myself).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                for(DataSnapshot record: dataSnapshot.getChildren()) {
-                    if (Objects.equals(record.getKey(), "Thumbnail")) {
-                        Toast.makeText(CameraActivity.this, record.getValue().toString(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-        /*HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("Thumbnail", sendPictureFile.toString());
-        thumbnailRef.setValue(hashMap);*/
-
-    }
-
     @Override
     public void surfaceChanged(SurfaceHolder holder, int i, int i1, int i2) {
 
@@ -661,8 +627,22 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
             frmEdit.setVisibility(View.VISIBLE);
             frmCancel.setVisibility(View.VISIBLE);
             frmCancelEdit.setVisibility(View.GONE);
-        } else if (i == R.id.btn_set_profile_pic) {
-            setProfilePic();
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (Objects.equals(parent.getItemAtPosition(position), "5 sec")) {
+            Constants.timerVal = 5;
+        } else if (Objects.equals(parent.getItemAtPosition(position), "10 sec")) {
+            Constants.timerVal = 10;
+        } else {
+            Constants.timerVal = 15;
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Constants.timerVal = 5;
     }
 }
