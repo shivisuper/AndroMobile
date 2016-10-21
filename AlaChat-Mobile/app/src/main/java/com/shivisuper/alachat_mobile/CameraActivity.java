@@ -221,10 +221,7 @@ public class CameraActivity extends AppCompatActivity implements SurfaceHolder.C
                 } else if (e2.getY() - e1.getY() > SWIPE_MIN_DISTANCE && Math.abs(velocityY) >
                         SWIPE_THRESHOLD_VELOCITY) {
                     Intent qrintent = new Intent(getApplicationContext(), AlacodeActivity.class);
-                    String qrcode_data = "{" +
-                            "\"uid\":" + "\"" + mAuth.getCurrentUser().getUid() + "\"" +
-                            ", \"username\":" + "\"" + userName + "\"" +
-                            "}";
+                    String qrcode_data = userName;
                     qrintent.putExtra(ARG_FROM_CAMERA, qrcode_data);
                     startActivity(qrintent);
                     //Toast.makeText(CameraActivity.this, "Down Swipe", Toast.LENGTH_SHORT).show();

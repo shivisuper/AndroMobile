@@ -42,6 +42,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
     // [END declare_auth_listener]
+    private boolean valid;
 
     private static final String TAG = "SignupActivity";
 
@@ -77,6 +78,21 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }
         };
+        /*usersRef.child(_username.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    valid = false;
+                    _username.setError("Username already taken!");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });*/
     }
 
     // [START on_start_add_listener]
@@ -163,7 +179,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     public boolean validate() {
 
-        boolean valid = true;
+        valid = true;
 
         String name = _nameText.getText().toString();
         String email = _emailText.getText().toString();
@@ -202,29 +218,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         if (username.isEmpty()) {
             _username.setError("Username cannot be blank");
             valid = false;
-        }  else {
-
-            final DatabaseReference childRef = usersRef.child(username);
-            childRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Log.d(TAG, String.valueOf(dataSnapshot.exists()));
-                    usernameExists = dataSnapshot.exists();
-                }
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-            if(usernameExists){
-                valid = false;
-                _username.setError("username exists");
-            }
-            else{
-                _username.setError(null);
-            }
-
+        }  else if (username.length() > 10) {
+            _username.setError("Username should not be more than 10 characters!");
+            valid = false;
         }
         return valid;
     }

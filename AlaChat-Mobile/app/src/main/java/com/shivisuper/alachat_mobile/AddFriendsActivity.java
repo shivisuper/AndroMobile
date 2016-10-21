@@ -136,7 +136,7 @@ public class AddFriendsActivity extends AppCompatActivity {
                     checkUserAlreadyFriend(toSearch);
                 } else {
                     //user does not exist.
-                    Toast.makeText(getApplicationContext(), "Username could  not be found", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), toSearch + " could not be found", Toast.LENGTH_SHORT).show();
                     Log.v("NotPresent", "NotPresent");
                 }
             }
@@ -161,7 +161,7 @@ public class AddFriendsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot snapshot) {
                 if (snapshot.exists()) {
                     //Already friend of this user
-                    Toast.makeText(getApplicationContext(), "User Already Exist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), toSearch + " is already a friend", Toast.LENGTH_SHORT).show();
                     adapter.notifyDataSetChanged();
                     Log.v("UserIsAlreadyFriend", toSearch);
                 } else {
@@ -213,14 +213,8 @@ public class AddFriendsActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         String toAddFriend = viewHolder.title.getText().toString();
-
-                        // please make a global varibale to store the userNamae
-
                         DatabaseReference addAsFriendRef = database.getReference("userDetails/"+ Constants.myself+"/");
                         addAsFriendRef.child("friends").child(toAddFriend).setValue(toAddFriend);
-
-
-
                         Intent intent = new Intent(AddFriendsActivity.this, FriendListActivity.class);
                         startActivity(intent);
                         finish();

@@ -31,7 +31,7 @@ public class AlacodeActivity extends AppCompatActivity implements View.OnClickLi
         ButterKnife.bind(this);
         passedArg = getIntent().getExtras().getString(ARG_FROM_CAMERA);
         initializeListeners();
-        Toast.makeText(this, passedArg, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, passedArg, Toast.LENGTH_SHORT).show();
         getID();
         // create thread to avoid ANR Exception
         Thread t = new Thread(new Runnable() {
